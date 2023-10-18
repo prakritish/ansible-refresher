@@ -1,0 +1,16 @@
+---
+- name: Generate Nginx Configuration
+  template:
+    src: nginx.j2
+    dest: /etc/nginx/sites-available/ssl-default
+
+- name: Remove default config
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: Create symlink for sites-enabled
+  file:
+    src: /etc/nginx/sites-available/ssl-default
+    dest: /etc/nginx/sites-enabled/ssl-default
+    state: link

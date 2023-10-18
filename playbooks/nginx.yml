@@ -1,0 +1,15 @@
+---
+- name: Install Nginx on Raspberry Pi4
+  hosts: all
+  gather_facts: yes
+
+  tasks:
+    - name: Use nginx_pi4 role
+      include_role:
+        name: nginx_pi4
+      when: 
+        - ansible_facts['machine'] == "aarch64"
+        - ansible_facts['os_family'] == "Debian"
+        - ansible_facts['pkg_mgr'] == "apt"
+      tags:
+       - always

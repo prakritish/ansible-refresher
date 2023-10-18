@@ -1,0 +1,7 @@
+#mbp16 ansible_connection=local
+---
+mac:
+  hosts:
+    mbp16:
+      ansible_host: localhost
+      ansible_connection: local

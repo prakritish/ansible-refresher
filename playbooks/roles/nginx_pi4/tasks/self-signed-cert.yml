@@ -1,0 +1,33 @@
+---
+- name: Create private key (RSA, 4096 bits)
+  community.crypto.openssl_privatekey:
+    path: "{{ ssl_privkey }}"
+    passphrase: "{{ ssl_privkey_pass }}"
+    cipher: auto
+
+- name: Create certificate signing request (CSR) for self-signed certificate
+  community.crypto.openssl_csr_pipe:
+    privatekey_path: "{{ ssl_privkey }}"
+    common_name: "{{ ansible_host }}"
+    organization_name: "{{ org_name }}"
+    privatekey_passphrase: "{{ ssl_privkey_pass }}"
+  register: csr
+
+- name: Generate Self Signed Certificate
+  community.crypto.x509_certificate:
+    path: "{{ ssl_cert }}"
+    privatekey_path: "{{ ssl_privkey }}"
+    csr_content: "{{ csr.csr }}"
+    provider: selfsigned
+    privatekey_passphrase: "{{ ssl_privkey_pass }}"
+
+- name: Generate DH Parameters with a different size (2048 bits)
+  community.crypto.openssl_dhparam:
+    path: "{{ ssl_dhpharm }}"
+    size: 2048
+
+- name: Add SSL Private Key Password File
+  ansible.builtin.copy:
+    content: "{{ ssl_privkey_pass }}"
+    dest: "{{ ssl_privkey_pass_file }}"
+    mode: 0600

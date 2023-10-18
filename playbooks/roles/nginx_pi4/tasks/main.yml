@@ -1,0 +1,25 @@
+---
+- name: Install Nginx
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+    autoclean: true
+    autoremove: true
+    clean: true
+    update_cache: true
+  tags:
+    - pkg
+    - install
+
+- name: Generate Self Signed Certificate
+  import_tasks: self-signed-cert.yml
+  tags:
+    - cert
+    - certificate
+
+- name: Generate Ngnix Configuration
+  import_tasks: generate-config.yml
+  notify: Restart Nginx
+  tags:
+    - config
+    - configuration
